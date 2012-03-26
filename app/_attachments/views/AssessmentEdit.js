@@ -17,7 +17,7 @@ AssessmentEdit = (function(_super) {
     return this.config = Tangerine.config.Subtest;
   };
 
-  AssessmentEdit.prototype.el = $('#content');
+  AssessmentEdit.prototype.el = '#content';
 
   AssessmentEdit.prototype.events = {
     "click button:contains(add new subtest)": "showSubtestForm",
@@ -73,7 +73,7 @@ AssessmentEdit = (function(_super) {
   };
 
   AssessmentEdit.prototype.showSubtestForm = function() {
-    return this.el.find("form.newSubtest").fadeIn();
+    return this.$el.find("form.newSubtest").fadeIn();
   };
 
   AssessmentEdit.prototype.renderSubtestItem = function(subtestId) {
@@ -82,7 +82,7 @@ AssessmentEdit = (function(_super) {
 
   AssessmentEdit.prototype.render = function() {
     var _this = this;
-    this.el.html("      <a href='#manage'>Return to: <b>Manage</b></a>      <div style='display:none' class='message'></div>      <h2>" + (this.model.get("name")) + "</h2>      <label for='edit-archive'>Archived</label>      <input type='checkbox' id='edit-archive' name='archived' value='" + (this.model.get("archived" === true) ? "checked" : "") + "'></input><br/>      <small>Click on a subtest to edit or drag and drop to reorder      <ul class='assessment-editor-list'>" + (_.map(this.model.get("urlPathsForPages"), function(subtestId) {
+    this.$el.html("      <a href='#manage'>Return to: <b>Manage</b></a>      <div style='display:none' class='message'></div>      <h2>" + (this.model.get("name")) + "</h2>      <label for='edit-archive'>Archived</label>      <input type='checkbox' id='edit-archive' name='archived' value='" + (this.model.get("archived" === true) ? "checked" : "") + "'></input><br/>      <small>Click on a subtest to edit or drag and drop to reorder      <ul class='assessment-editor-list'>" + (_.map(this.model.get("urlPathsForPages"), function(subtestId) {
       return _this.renderSubtestItem(subtestId);
     }).join("")) + "      </ul>      <small><button>add new subtest</button></small>      <form class='newSubtest' style='display:none'>        <label for='pageType'>Type</label>        <select name='pageType'>          <option></option>" + (_.map(this.config.pageTypes, function(pageType) {
       return "<option>" + pageType + "</option>";

@@ -1,10 +1,10 @@
 class LoginView extends Backbone.View
   initialize: ->
 
-  el: $('#content')
+  el: '#content'
 
   render: =>
-    @el.html "
+    @$el.html "
       <div style='margin:0px auto; width:300px'>
         <img src='images/tangerinelogo300w.png'/>
         <form id='login-form'>

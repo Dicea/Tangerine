@@ -39,24 +39,51 @@ class Assessment extends Backbone.Model
         else
           options?.error?()
 
-
   fetch: (options) =>
     # Whenever we fetch data we need to take the result and setup the assessment object before doing the callback
     # this probably belongs in the constructor/initialization code
     superOptions = options
     superOptions = 
+
+  initialize: ->
+    _.bindAll @, 'fetch', 'addPage', 'render', 'linkPages', 'doAssessment'
+    @pages = []
+    @fetch
+
+  loadSubtests: ( options ) ->
+    @fetch
       success: =>
         @changeName(@get("name"))
-        pages = []
-        for urlPath in @get("urlPathsForPages")
-          url = "/#{Tangerine.config.db_name}/#{urlPath}"
-          JQueryMobilePage.loadFromHTTP {url: url, async: false}, (page) =>
-            page.assessment = this
-            pages.push page
-        @setPages(pages)
-        options?.success()
+        @urlPathsForPages = @get "urlPathsForPages"
+        @subtestsToLoad = @urlPathsForPages.length
+        for urlPath, index in @urlPathsForPages
+          one_subtest = new Subtest { _id : urlPath }
+          one_subtest.fetch
+            success: ( model ) =>
+              @addPage model
+              @subtestsToLoad--
+              if @subtestsToLoad == 0 
+                console.log "done loading"
+                @linkPages()
+                options.success()
 
-    super(superOptions)
+  # this function depends on @urlPathsForPages being good
+  addPage: ( subtest_model ) ->
+    index = _.indexOf @urlPathsForPages, subtest_model.id
+    subtest_model.assessment = @
+    subtest_model.pageNumber = index
+    subtest_model.urlScheme = @urlScheme
+    subtest_model.urlPath = @urlPath + "." + subtest_model.pageId
+    @pages[index] = subtest_model
+  
+  linkPages: ->
+    for subtest_model, index in @pages
+      subtest_model.previousPage = @pages[index - 1] unless index     == 0
+      subtest_model.nextPage     = @pages[index + 1] unless index + 1 == @pages.length
+
+  render: ->
+    $.assessment = this # I think this is also Tangerine.assessment
+    @pages[0].render()
 
   changeName: (newName) ->
     @name = newName
@@ -65,7 +92,6 @@ class Assessment extends Backbone.Model
     if @pages?
       for page in @pages
         page.urlPath = @urlPath + "." + page.pageId
-        @urlPathsForPages.push(page.urlPath)
 
   targetDatabase: ->
     name = @name || @get("name")
@@ -75,14 +101,10 @@ class Assessment extends Backbone.Model
     @pages = pages
     @urlPathsForPages = []
     for page, index in @pages
-      page.assessment = this
-      page.pageNumber = index
-      page.previousPage = @pages[index - 1] unless index == 0
-      page.nextPage = @pages[index + 1] unless @pages.length == index + 1
-      page.urlScheme = @urlScheme
-      page.urlPath = @urlPath + "." + page.pageId
-      @urlPathsForPages.push(page.urlPath)
+      @addPage page, index
+  
 
+    
   getPage: (pageId) ->
     for page in @pages
       return page if page.pageId is pageId
@@ -134,41 +156,28 @@ class Assessment extends Backbone.Model
   reset: ->
     document.location = @resetURL()
     
-  onReady: (callback) ->
-    maxTries = 10
-    timesTried = 0
-    checkIfLoading = =>
-      timesTried++
-      if @loading
-        throw "Timeout error while waiting for assessment: #{@name}" if timesTried >= maxTries
-        setTimeout(checkIfLoading, 1000)
-        return
-      for page in @pages
-        if page.loading
-          throw "Timeout error while waiting for page: #{page.pageId}" if timesTried >= maxTries
-          setTimeout(checkIfLoading, 1000)
-          return
-      callback()
-    return checkIfLoading()
+#  onReady: (callback) ->
+#    maxTries = 10
+#    timesTried = 0
+#    checkIfLoading: =>
+#      timesTried++
+#      if @loading
+#        throw "Timeout error while waiting for assessment: #{@name}" if timesTried >= maxTries
+#        setTimeout(checkIfLoading, 1000)
+#        return
+#      for page in @pages
+#        if page.loading
+#          throw "Timeout error while waiting for page: #{page.pageId}" if timesTried >= maxTries
+#          setTimeout(checkIfLoading, 1000)
+#          return
+#      callback()
+#    return checkIfLoading()
 
-  render: ->
-    @onReady =>
-      $.assessment = this
-      @pages[0].render()
+
 
   flash: ->
-    $('body').addClass("flash")
-    $('.controls').addClass("flash")
-    $('.toggle-grid-with-timer td').addClass("flash")
-    $("div[data-role=header]").toggleClass("flash")
-    $("div[data-role=footer]").toggleClass("flash")
-    setTimeout(->
-      $('body').removeClass("flash")
-      $('.controls').removeClass("flash")
-      $('.toggle-grid-with-timer td').removeClass("flash")
-      $("div[data-role=header]").removeClass("flash")
-      $("div[data-role=footer]").removeClass("flash")
-    ,2000)
+    $('body').addClass("flash").pause(2000).removeClass("flash");
+
 
   toPaper: (callback) ->
     @onReady =>

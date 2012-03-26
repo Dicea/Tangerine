@@ -1,0 +1,2 @@
+class ConsentPageView extends SubtestPageView
+  

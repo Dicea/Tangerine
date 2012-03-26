@@ -1,9 +1,9 @@
 class ResultsView extends Backbone.View
-  el: $('#content')
+  el: '#content'
 
   render: =>
 
-    @el.html "
+    @$el.html "
       <div id='message'></div>
       <h2>#{@assessment.get "name"}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
@@ -13,7 +13,7 @@ class ResultsView extends Backbone.View
       <button>CSV/Excel</button>
       <hr/>
       Results saved by #{$.enumerator}:
-      <div id='results'></div>
+      <div id='results'>No results saved yet.</div>
     "
 
     @detectCloud()

@@ -1,27 +1,29 @@
 class AssessmentListView extends Backbone.View
   initialize: ->
 
-  el: $('#content')
+  el: '#content'
 
   templateTableRow: Handlebars.compile "
     <tr>
-      <td class='assessment-name'>
-        <a href='#assessment/{{id}}'>{{name}}</a>
+      <td>
+        <div class='assessment-name'>{{name}}</div>
+        <a href='#assessment/{{id}}'>Perform Assessment</a><br>
+        <a href='#results/{{id}}/{{enumerator}}'>Results</a>
       </td>
       <td class='number-completed-by-current-enumerator'>
-        <a href='#results/{{id}}/{{enumerator}}'>{{number_completed}}</a>
+        {{number_completed}}
       </td>
     </tr>
   "
 
   render: =>
-    @el.html "
+    @$el.html "
       <h1>Collect</h1>
       <div id='message'></div>
       <table id='assessments' class='tablesorter'>
         <thead>
           <tr>
-            <th>Assessment Name</th><th>Number Collected</th>
+            <th>Assessment Name</th><th>Total Collected</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -51,3 +53,4 @@ class AssessmentListView extends Backbone.View
               @el.find("#assessments tbody").append @templateTableRow value
 
             $('table').tablesorter()
+

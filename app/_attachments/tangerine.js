@@ -167,7 +167,6 @@ Router = (function(_super) {
   Router.prototype.assessments = function() {
     return this.verify_logged_in({
       success: function() {
-        $('#current-student-id').html("");
         if (Tangerine.assessmentListView == null) {
           Tangerine.assessmentListView = new AssessmentListView();
         }
@@ -194,18 +193,14 @@ Router = (function(_super) {
   };
 
   Router.prototype.assessment = function(id) {
+    var _this = this;
     return this.verify_logged_in({
       success: function() {
-        $('#enumerator').html($.enumerator);
         if (Tangerine.assessment != null) location.reload();
         Tangerine.assessment = new Assessment({
           _id: id
         });
-        return Tangerine.assessment.fetch({
-          success: function() {
-            return Tangerine.assessment.render();
-          }
-        });
+        return Tangerine.assessment.doAssessment();
       }
     });
   };
@@ -286,6 +281,7 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
+<<<<<<< HEAD
   var config,
     _this = this;
   config = new Backbone.Model({
@@ -298,8 +294,9 @@ $(function() {
   });
   Tangerine.router = new Router();
   Backbone.history.start();
+=======
+>>>>>>> feature/JQueryMobilePageRefactor
   $("#version").load('version');
-  return $('#main_nav button').click(function(event) {
-    return Tangerine.router.navigate($(event.target).attr("href"), true);
-  });
+  Tangerine.router = new Router();
+  return Backbone.history.start();
 });

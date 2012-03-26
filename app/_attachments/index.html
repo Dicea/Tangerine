@@ -11,7 +11,6 @@
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/style.css?v=1">
     <link rel="stylesheet" href="css/tablesorter.css">
-    <link rel="stylesheet" href="css/tablesorter.css">
     <link rel="stylesheet" href="css/jquery.cleditor.css">
 
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
@@ -31,9 +30,9 @@
       <img src='images/TangerineNoBackground.png'>
       <span id='version'></span>
       <nav id="main_nav">
-        <button id="collect_button" href="#assessments">Collect</button>
-        <button id="manage_button" href="#manage">Manage</button>
-        <button id="logout_button" href="#logout">Logout</button>
+        <a id="collect_button" href="#assessments">Collect</a>
+        <a id="manage_button" href="#manage">Manage</a>
+        <a id="logout_button" href="#logout">Logout</a>
       </nav>
       Enumerator: <span id='enumerator'>not logged in</span> |
       Student ID: <span id='current-student-id'></span>
@@ -68,14 +67,43 @@
     <script type="text/javascript" src="utils.js"></script>
     <script type="text/javascript" src="models/assessment.js"></script>
     <script type="text/javascript" src="models/AssessmentCollection.js"></script>
-    <script type="text/javascript" src="models/jqueryMobilePage.js"></script>
+
+    <script src="models/subtestPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/textPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/interview.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/dictation.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/concentPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/dateTimePage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/phonemePage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/resultsPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/schoolPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/studentInformationPage.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/toggleGridWithTimer.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/untimedSubtest.js" type="text/javascript" charset="utf-8"></script>
+    <script src="models/untimedSubtestLinked.js" type="text/javascript" charset="utf-8"></script>
+
+
     <script type="text/javascript" src="models/result.js"></script>
     <script type="text/javascript" src="models/resultCollection.js"></script>
     <script type="text/javascript" src="models/timer.js"></script>
     <script type="text/javascript" src="models/subtest.js"></script>
     <script type="text/javascript" src="models/replicationLogEntry.js"></script>
     <script type="text/javascript" src="models/replicationLogEntryCollection.js"></script>
+
     <script type="text/javascript" src="views/Login.js"></script>
+    <script type="text/javascript" src="views/SubtestPageView.js"></script>
+    <script type="text/javascript" src="views/InterviewView.js"></script>
+    <script type="text/javascript" src="views/ConsentPageView.js"></script>
+    <script type="text/javascript" src="views/DateTimePageView.js"></script>
+    <script type="text/javascript" src="views/InterviewView.js"></script>
+    <script type="text/javascript" src="views/ResultsPageView.js"></script>
+    <script type="text/javascript" src="views/SchoolPageView.js"></script>
+    <script type="text/javascript" src="views/StudentInformationPageView.js"></script>
+    <script type="text/javascript" src="views/ToggleGridWithTimerView.js"></script>
+    <script type="text/javascript" src="views/UntimedSubtestView.js"></script>
+    <script type="text/javascript" src="views/UntimedSubtestLinkedView.js"></script>
+
+
     <script type="text/javascript" src="views/AssessmentList.js"></script>
     <script type="text/javascript" src="views/Result.js"></script>
     <script type="text/javascript" src="views/Results.js"></script>

@@ -12,10 +12,11 @@ ResultsView = (function(_super) {
     ResultsView.__super__.constructor.apply(this, arguments);
   }
 
-  ResultsView.prototype.el = $('#content');
+  ResultsView.prototype.el = '#content';
 
   ResultsView.prototype.render = function() {
     var _this = this;
+<<<<<<< HEAD
     this.el.html("      <div id='message'></div>      <h2>" + (this.assessment.get("name")) + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + $.enumerator + ":      <div id='results'></div>    ");
     this.detectCloud();
     this.updateLastCloudReplication();
@@ -25,6 +26,34 @@ ResultsView = (function(_super) {
       Tangerine.resultView.model = result;
       finishTime = new moment(result.get("timestamp"));
       return $("#results").append("        <div><button>" + (finishTime.format("D-MMM-YY")) + " (" + (finishTime.fromNow()) + ")</button></div>        <div class='result'>" + (Tangerine.resultView.render()) + "</div>      ");
+=======
+    this.$el.html("      <div id='message'></div>      <h2>" + this.databaseName + "</h2>      <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>      <button>Detect save options</button>      <div id='saveOptions'>      </div>      <button>CSV/Excel</button>      <hr/>      Results saved by " + $.enumerator + ":      <div id='results'>No results saved yet.</div>    ");
+    this.detectCloud();
+    $.couch.db(this.databaseName).view("results/byEnumerator", {
+      key: $.enumerator,
+      reduce: false,
+      success: function(result) {
+        console.log(result);
+        return $.couch.db(_this.databaseName).allDocs({
+          keys: _.pluck(result.rows, "id"),
+          include_docs: true,
+          success: function(docs) {
+            _this.results = new ResultCollection(_.pluck(docs.rows, "doc"));
+            _this.results.databaseName = _this.databaseName;
+            _this.results.each(function(result) {
+              var finishTime;
+              if (Tangerine.resultView == null) {
+                Tangerine.resultView = new ResultView();
+              }
+              Tangerine.resultView.model = result;
+              finishTime = new moment(result.get("timestamp"));
+              return $("#results").html("                <div><button>" + (finishTime.format("D-MMM-YY")) + " (" + (finishTime.fromNow()) + ")</button></div>                <div class='result'>" + (Tangerine.resultView.render()) + "</div>              ");
+            });
+            return _this.updateLastCloudReplication();
+          }
+        });
+      }
+>>>>>>> feature/JQueryMobilePageRefactor
     });
     $("#results").accordion({
       collapsible: true,

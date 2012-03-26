@@ -11,6 +11,7 @@ Tangerine = {
     start: 100,
     finish: 200
   },
+<<<<<<< HEAD
   port: "5985",
   database_name: "tangerine",
   design_doc_name: "tangerine"
@@ -19,7 +20,21 @@ Tangerine = {
 Tangerine.cloud.url = "http://" + Tangerine.cloud.username + ":" + Tangerine.cloud.password + "@" + Tangerine.cloud.target + "/" + Tangerine.database_name;
 
 Backbone.couch_connector.config.db_name = Tangerine.database_name;
+=======
+  port: "5985"
+};
+
+Tangerine.cloud.url = "http://" + Tangerine.cloud.username + ":" + Tangerine.cloud.password + "@" + Tangerine.cloud.target;
+
+Backbone.couch_connector.config.db_name = "tangerine";
+>>>>>>> feature/JQueryMobilePageRefactor
 
 Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc_name;
 
 Backbone.couch_connector.config.global_changes = false;
+
+$.couch.db(Backbone.couch_connector.config.db_name).openDoc("Config", {
+  success: function(data) {
+    return Tangerine.config = data;
+  }
+});

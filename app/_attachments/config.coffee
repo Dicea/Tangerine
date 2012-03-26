@@ -17,3 +17,4 @@ Backbone.couch_connector.config.db_name = Tangerine.database_name
 Backbone.couch_connector.config.ddoc_name = Tangerine.design_doc_name
 Backbone.couch_connector.config.global_changes = false
 
+$.couch.db(Backbone.couch_connector.config.db_name).openDoc("Config", {success:(data) -> Tangerine.config = data})
