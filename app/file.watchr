@@ -1,5 +1,6 @@
 def push_and_test
 #    `make combined`
+  puts "\nPushing to couchapp\n\n"
   `git describe --tags > version`
   `couchapp push`
 #  `pkill cucumber`
@@ -14,26 +15,22 @@ end
 push_and_test()
 
 watch( '.html$') {|match_data|
+  puts "HTML file changed: #{match_data[0]}"
   push_and_test()
 }
 watch( '.js$') {|match_data|
+  puts "JavaScript file changed: #{match_data[0]}"
   push_and_test()
 }
 watch( '.*\.json$') {|match_data|
+  puts "JSON file changed: #{match_data}"
   push_and_test()
 }
 watch( '(.*\.coffee$)' ) {|match_data|
-  puts match_data[0]
+  puts "\nCompiling: #{match_data[0]}"
   result = `coffee --bare --compile #{match_data[0]} 2>&1`
   error = false
-  result.each{|line|
-    if line.match(/In /)  then
-      error = true
-      puts line
-#      `mplayer -really-quiet "/usr/share/evolution/2.30/sounds/default_alarm.wav"`
-      `notify-send "#{line}" -i /usr/share/icons/Humanity/status/128/dialog-warning.svg &`
-    end
-  }
+  puts result 
   if not error
     push_and_test()
   end

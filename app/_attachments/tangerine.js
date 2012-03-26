@@ -156,7 +156,6 @@ Router = (function(_super) {
   Router.prototype.assessments = function() {
     return this.verify_logged_in({
       success: function() {
-        $('#current-student-id').html("");
         if (Tangerine.assessmentListView == null) {
           Tangerine.assessmentListView = new AssessmentListView();
         }
@@ -183,18 +182,14 @@ Router = (function(_super) {
   };
 
   Router.prototype.assessment = function(id) {
+    var _this = this;
     return this.verify_logged_in({
       success: function() {
-        $('#enumerator').html($.enumerator);
         if (Tangerine.assessment != null) location.reload();
         Tangerine.assessment = new Assessment({
           _id: id
         });
-        return Tangerine.assessment.fetch({
-          success: function() {
-            return Tangerine.assessment.render();
-          }
-        });
+        return Tangerine.assessment.doAssessment();
       }
     });
   };
@@ -275,63 +270,7 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-  var assessmentCollection, assessmentCollectionErrors, config, databaseErrorCount, databaseFixAttempts,
-    _this = this;
-  assessmentCollection = new AssessmentCollection();
-  databaseErrorCount = 0;
-  databaseFixAttempts = 0;
-  assessmentCollectionErrors = 0;
-  while (true) {
-    assessmentCollection.fetch({
-      success: function() {
-        return assessmentCollection.each(function(assessment) {
-          $.couch.db(assessment.targetDatabase()).info({
-            error: function(responseCode, b, errorType) {
-              databaseErrorCount++;
-              if (errorType === "no_db_file") {
-                return Utils.createResultsDatabase(assessment.targetDatabase());
-              }
-            }
-          });
-          return $.couch.db(assessment.targetDatabase()).openDoc("_design/results", {
-            error: function(responseCode, b, errorType) {
-              databaseErrorCount++;
-              if (responseCode === 404) {
-                return Utils.createResultViews(assessment.targetDatabase());
-              }
-            }
-          });
-        });
-      },
-      error: function() {
-        return assessmentCollectionErrors++;
-      }
-    });
-    if (databaseErrorCount === 0 || databaseFixAttempts === 3) break;
-    databaseFixAttempts++;
-  }
-  if (assessmentCollectionErrors > 0) console.log("Database error");
-  console.log("loading config");
-  config = new Backbone.Model({
-    _id: "Config"
-  });
-  console.log("fetching config");
-  config.fetch({
-    success: function() {
-      console.log("I supposedly got the config object. This is it: ");
-      console.log(config.toJSON());
-      return Tangerine.config = config.toJSON();
-    },
-    error: function() {
-      return console.log("Error loading config.");
-    }
-  });
-  console.log("config:");
-  console.log(Tangerine.config);
-  Tangerine.router = new Router();
-  Backbone.history.start();
   $("#version").load('version');
-  return $('#main_nav button').click(function(event) {
-    return Tangerine.router.navigate($(event.target).attr("href"), true);
-  });
+  Tangerine.router = new Router();
+  return Backbone.history.start();
 });

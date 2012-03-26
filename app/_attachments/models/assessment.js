@@ -1,5 +1,4 @@
 var Assessment,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -10,38 +9,78 @@ Assessment = (function(_super) {
   __extends(Assessment, _super);
 
   function Assessment() {
-    this.fetch = __bind(this.fetch, this);
     Assessment.__super__.constructor.apply(this, arguments);
   }
 
   Assessment.prototype.url = '/assessment';
 
-  Assessment.prototype.fetch = function(options) {
-    var superOptions,
-      _this = this;
-    superOptions = options;
-    superOptions = {
+  Assessment.prototype.initialize = function() {
+    _.bindAll(this, 'fetch', 'addPage', 'render', 'linkPages', 'doAssessment');
+    this.pages = [];
+    return this.fetch;
+  };
+
+  Assessment.prototype.doAssessment = function() {
+    var _this = this;
+    return this.fetch({
       success: function() {
-        var pages, url, urlPath, _i, _len, _ref;
+        var index, one_subtest, urlPath, _len, _ref, _results;
         _this.changeName(_this.get("name"));
-        pages = [];
-        _ref = _this.get("urlPathsForPages");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          urlPath = _ref[_i];
-          url = "/" + Tangerine.config.db_name + "/" + urlPath;
-          JQueryMobilePage.loadFromHTTP({
-            url: url,
-            async: false
-          }, function(page) {
-            page.assessment = _this;
-            return pages.push(page);
+        _this.urlPathsForPages = _this.get("urlPathsForPages");
+        _this.subtestsToLoad = _this.urlPathsForPages.length;
+        _ref = _this.urlPathsForPages;
+        _results = [];
+        for (index = 0, _len = _ref.length; index < _len; index++) {
+          urlPath = _ref[index];
+          one_subtest = new Subtest({
+            _id: urlPath
           });
+          _results.push(one_subtest.fetch({
+            success: function(model) {
+              _this.addPage(model);
+              _this.subtestsToLoad--;
+              if (_this.subtestsToLoad === 0) {
+                console.log("done loading");
+                _this.linkPages();
+                return _this.render();
+              }
+            }
+          }));
         }
-        _this.setPages(pages);
-        return options != null ? options.success() : void 0;
+        return _results;
       }
-    };
-    return Assessment.__super__.fetch.call(this, superOptions);
+    });
+  };
+
+  Assessment.prototype.addPage = function(subtest_model) {
+    var index;
+    index = _.indexOf(this.urlPathsForPages, subtest_model.id);
+    subtest_model.assessment = this;
+    subtest_model.pageNumber = index;
+    subtest_model.urlScheme = this.urlScheme;
+    subtest_model.urlPath = this.urlPath + "." + subtest_model.pageId;
+    return this.pages[index] = subtest_model;
+  };
+
+  Assessment.prototype.linkPages = function() {
+    var index, subtest_model, _len, _ref, _results;
+    _ref = this.pages;
+    _results = [];
+    for (index = 0, _len = _ref.length; index < _len; index++) {
+      subtest_model = _ref[index];
+      if (index !== 0) subtest_model.previousPage = this.pages[index - 1];
+      if (index + 1 !== this.pages.length) {
+        _results.push(subtest_model.nextPage = this.pages[index + 1]);
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
+  Assessment.prototype.render = function() {
+    $.assessment = this;
+    return this.pages[0].render();
   };
 
   Assessment.prototype.changeName = function(newName) {
@@ -54,8 +93,7 @@ Assessment = (function(_super) {
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         page = _ref[_i];
-        page.urlPath = this.urlPath + "." + page.pageId;
-        _results.push(this.urlPathsForPages.push(page.urlPath));
+        _results.push(page.urlPath = this.urlPath + "." + page.pageId);
       }
       return _results;
     }
@@ -75,13 +113,7 @@ Assessment = (function(_super) {
     _results = [];
     for (index = 0, _len = _ref.length; index < _len; index++) {
       page = _ref[index];
-      page.assessment = this;
-      page.pageNumber = index;
-      if (index !== 0) page.previousPage = this.pages[index - 1];
-      if (this.pages.length !== index + 1) page.nextPage = this.pages[index + 1];
-      page.urlScheme = this.urlScheme;
-      page.urlPath = this.urlPath + "." + page.pageId;
-      _results.push(this.urlPathsForPages.push(page.urlPath));
+      _results.push(this.addPage(page, index));
     }
     return _results;
   };
@@ -164,58 +196,8 @@ Assessment = (function(_super) {
     return document.location = this.resetURL();
   };
 
-  Assessment.prototype.onReady = function(callback) {
-    var checkIfLoading, maxTries, timesTried,
-      _this = this;
-    maxTries = 10;
-    timesTried = 0;
-    checkIfLoading = function() {
-      var page, _i, _len, _ref;
-      timesTried++;
-      if (_this.loading) {
-        if (timesTried >= maxTries) {
-          throw "Timeout error while waiting for assessment: " + _this.name;
-        }
-        setTimeout(checkIfLoading, 1000);
-        return;
-      }
-      _ref = _this.pages;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        page = _ref[_i];
-        if (page.loading) {
-          if (timesTried >= maxTries) {
-            throw "Timeout error while waiting for page: " + page.pageId;
-          }
-          setTimeout(checkIfLoading, 1000);
-          return;
-        }
-      }
-      return callback();
-    };
-    return checkIfLoading();
-  };
-
-  Assessment.prototype.render = function() {
-    var _this = this;
-    return this.onReady(function() {
-      $.assessment = _this;
-      return _this.pages[0].render();
-    });
-  };
-
   Assessment.prototype.flash = function() {
-    $('body').addClass("flash");
-    $('.controls').addClass("flash");
-    $('.toggle-grid-with-timer td').addClass("flash");
-    $("div[data-role=header]").toggleClass("flash");
-    $("div[data-role=footer]").toggleClass("flash");
-    return setTimeout(function() {
-      $('body').removeClass("flash");
-      $('.controls').removeClass("flash");
-      $('.toggle-grid-with-timer td').removeClass("flash");
-      $("div[data-role=header]").removeClass("flash");
-      return $("div[data-role=footer]").removeClass("flash");
-    }, 2000);
+    return $('body').addClass("flash").pause(2000).removeClass("flash");
   };
 
   Assessment.prototype.toPaper = function(callback) {

@@ -14,14 +14,14 @@ AssessmentListView = (function(_super) {
 
   AssessmentListView.prototype.initialize = function() {};
 
-  AssessmentListView.prototype.el = $('#content');
+  AssessmentListView.prototype.el = '#content';
 
-  AssessmentListView.prototype.templateTableRow = Handlebars.compile("    <tr>      <td class='assessment-name'>        <button class='assessment-name' data-target='{{id}}'>{{name}}</button>      </td>      <td class='number-completed-by-current-enumerator'>        <button class='number-completed' data-database-name='{{database_name}}'>{{number_completed}}</button>      </td>    </tr>  ");
+  AssessmentListView.prototype.templateTableRow = Handlebars.compile("    <tr>      <td>        <div class='assessment-name'>{{name}}</div>        <a href='#assessment/{{id}}'>Perform Assessment</a><br>        <a href='#results/{{database_name}}'>Results</a>      </td>      <td class='number-completed-by-current-enumerator'>        {{number_completed}}      </td>    </tr>  ");
 
   AssessmentListView.prototype.render = function() {
     var assessmentCollection,
       _this = this;
-    this.el.html("      <h1>Collect</h1>      <div id='message'></div>      <table id='assessments' class='tablesorter'>        <thead>          <tr>            <th>Assessment Name</th><th>Number Collected</th>          </tr>        </thead>        <tbody></tbody>      </table>    ");
+    this.$el.html("      <h1>Collect</h1>      <div id='message'></div>      <table id='assessments' class='tablesorter'>        <thead>          <tr>            <th>Assessment Name</th><th>Total Collected</th>          </tr>        </thead>        <tbody></tbody>      </table>    ");
     $("#assessments").tablesorter();
     assessmentCollection = new AssessmentCollection();
     return assessmentCollection.fetch({
@@ -38,7 +38,7 @@ AssessmentListView = (function(_super) {
             key: $.enumerator,
             success: function(result) {
               var _ref;
-              _this.el.find("#assessments tbody").append(_this.templateTableRow({
+              _this.$el.find("#assessments tbody").append(_this.templateTableRow({
                 name: assessment.get("name"),
                 number_completed: ((_ref = result.rows[0]) != null ? _ref.value : void 0) || "0",
                 id: assessment.get("_id"),
@@ -50,19 +50,6 @@ AssessmentListView = (function(_super) {
         });
       }
     });
-  };
-
-  AssessmentListView.prototype.events = {
-    "click button.assessment-name": "loadAssessment",
-    "click button.number-completed": "loadResults"
-  };
-
-  AssessmentListView.prototype.loadAssessment = function(event) {
-    return Tangerine.router.navigate("assessment/" + ($(event.target).attr("data-target")), true);
-  };
-
-  AssessmentListView.prototype.loadResults = function(event) {
-    return Tangerine.router.navigate("results/" + ($(event.target).attr("data-database-name")), true);
   };
 
   return AssessmentListView;

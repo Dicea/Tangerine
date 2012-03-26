@@ -3,7 +3,7 @@ class AssessmentEdit extends Backbone.View
   initialize: ->
     @config = Tangerine.config.Subtest
 
-  el: $('#content')
+  el: '#content'
 
   events:
     "click button:contains(add new subtest)": "showSubtestForm"
@@ -39,7 +39,7 @@ class AssessmentEdit extends Backbone.View
         $("div.message").html("Error saving changes").show().fadeOut(3000)
 
   showSubtestForm: ->
-    @el.find("form.newSubtest").fadeIn()
+    @$el.find("form.newSubtest").fadeIn()
 
   renderSubtestItem: (subtestId) ->
     "
@@ -54,7 +54,7 @@ class AssessmentEdit extends Backbone.View
     "
 
   render: =>
-    @el.html "
+    @$el.html "
       <a href='#manage'>Return to: <b>Manage</b></a>
       <div style='display:none' class='message'></div>
       <h2>#{@model.get("name")}</h2>

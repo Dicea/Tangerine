@@ -1,0 +1,1 @@
+class SchoolPageView extends SubtestPageView

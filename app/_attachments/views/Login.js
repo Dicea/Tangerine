@@ -14,10 +14,10 @@ LoginView = (function(_super) {
 
   LoginView.prototype.initialize = function() {};
 
-  LoginView.prototype.el = $('#content');
+  LoginView.prototype.el = '#content';
 
   LoginView.prototype.render = function() {
-    return this.el.html("      <div style='margin:0px auto; width:300px'>        <img src='images/tangerinelogo300w.png'/>        <form id='login-form'>          <label for='name'>Enumerator Name</label>          <input id='name' name='name'></input>          <label for='password'>Password</label>          <input id='password' type='password' name='password'></input>          <input type='submit' value='Login'></input>          <div id='message'></div>        </form>      </div>    ");
+    return this.$el.html("      <div style='margin:0px auto; width:300px'>        <img src='images/tangerinelogo300w.png'/>        <form id='login-form'>          <label for='name'>Enumerator Name</label>          <input id='name' name='name'></input>          <label for='password'>Password</label>          <input id='password' type='password' name='password'></input>          <input type='submit' value='Login'></input>          <div id='message'></div>        </form>      </div>    ");
   };
 
   LoginView.prototype.events = {

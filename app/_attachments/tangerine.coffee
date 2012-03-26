@@ -98,8 +98,6 @@ class Router extends Backbone.Router
   assessments: ->
     @verify_logged_in
       success: ->
-        $('#current-student-id').html ""
-
         Tangerine.assessmentListView ?= new AssessmentListView()
         Tangerine.assessmentListView.render()
 
@@ -110,7 +108,6 @@ class Router extends Backbone.Router
   logout: ->
     $.couch.logout
       success: =>
-        
         @handle_menu()
         $.enumerator = null
         $('#enumerator').html("Not logged in")
@@ -118,18 +115,19 @@ class Router extends Backbone.Router
 
   assessment: (id) ->
     @verify_logged_in
-      success: ->
-        $('#enumerator').html($.enumerator)
+      success: =>
 
         # This is terrible but it fixes my problem
         # Currently live click handlers get duplicated over and over again
         # Need to convert everything to backbone style views
         if Tangerine.assessment?
           location.reload()
-        Tangerine.assessment = new Assessment {_id:id}
-        Tangerine.assessment.fetch
-          success: ->
-            Tangerine.assessment.render()
+
+        Tangerine.assessment = new Assessment { _id : id }
+        Tangerine.assessment.doAssessment()
+        #Tangerine.assessment.fetch
+        #  success: =>
+        #    Tangerine.assessment.render()
 
   verify_logged_in: (options) ->
     $.couch.session
@@ -227,92 +225,11 @@ class Router extends Backbone.Router
 # Initialization/Detection
 $ -> # run after DOM loads
 
-  #    Detect admin party mode
-  #    $.couch.config(
-  #      {
-  #        success: (result) ->
-  #          if _.keys(result).length == 0 # admin party mode
-  #            $.couch.config({},"admins",Tangerine.config.user_with_database_create_permission, Tangerine.config.password_with_database_create_permission)
-  #        error: ->
-  #          # Do nothing - we can't access this because we are not admins
-  #      }
-  #      "admins"
-  #    )
+  # @TODO We should write some better database error checking.
 
-  # Should remove later - always make sure the timeout is 28800 (8 hrs)
-  #    $.ajax "/_config/couch_httpd_auth/timeout",
-  #    username: Tangerine.config.user_with_database_create_permission
-  #    password: Tangerine.config.password_with_database_create_permission
-  #    type: "put"
-  #    data: '"28800"'
-
-  #
-  # Verify database structure
-  #
-  
-  assessmentCollection = new AssessmentCollection()
-  
-  databaseErrorCount = 0
-  databaseFixAttempts = 0
-  assessmentCollectionErrors = 0
-  
-  loop
-    assessmentCollection.fetch
-      success: =>
-        assessmentCollection.each ( assessment ) =>
-
-          # assert database
-          $.couch.db( assessment.targetDatabase() ).info
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if errorType == "no_db_file"
-                Utils.createResultsDatabase assessment.targetDatabase()
-
-          # assert result design docs
-          # @TODO maybe assert report docs too
-          $.couch.db( assessment.targetDatabase() ).openDoc "_design/results"
-            error: ( responseCode, b, errorType ) =>
-              databaseErrorCount++
-              if responseCode == 404 then Utils.createResultViews assessment.targetDatabase()
-
-      error: =>
-        assessmentCollectionErrors++
-    break if databaseErrorCount == 0 or databaseFixAttempts == 3
-
-    databaseFixAttempts++
-
-  if assessmentCollectionErrors > 0 then console.log "Database error"
-
-  #
-  # Start the application
-  #
-  
-  # load config
-  console.log "loading config"
-  config = new Backbone.Model
-    _id: "Config"
-  console.log "fetching config"
-  config.fetch
-    success: =>
-      console.log "I supposedly got the config object. This is it: "
-      console.log config.toJSON()
-      Tangerine.config = config.toJSON()
-      
-    error: =>
-      console.log "Error loading config."
-  console.log "config:"
-  console.log Tangerine.config
-  
-  # Reuse the view objects to stop events from being duplicated (and to save memory)
-  Tangerine.router = new Router()
-  Backbone.history.start()
-  
-
-  #
-  # Set up some interface stuff
-  #
   $("#version").load 'version'
+  
+  Tangerine.router = new Router()
 
-  $( '#main_nav button' ).click (event) ->
-    Tangerine.router.navigate( $( event.target ).attr( "href" ), true );
+  Backbone.history.start()
 

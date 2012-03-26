@@ -12,6 +12,18 @@ Subtest = (function(_super) {
 
   Subtest.prototype.url = "/subtest";
 
+  Subtest.prototype.initialize = function() {
+    return _.bindAll(this, 'render');
+  };
+
+  Subtest.prototype.render = function() {
+    console.log("trying to render a " + this.attributes.pageType + "View");
+    this.view = new window[this.attributes.pageType + "View"]({
+      model: this
+    });
+    return this.view.render();
+  };
+
   return Subtest;
 
 })(Backbone.Model);

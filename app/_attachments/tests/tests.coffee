@@ -31,9 +31,9 @@ $(document).ready ->
     localStorage.clear()
 
 
-  test "JQueryMobilePage", ->
+  test "SubtestPage", ->
     expect(3)
-    jqueryMobilePage = new JQueryMobilePage()
+    jqueryMobilePage = new SubtestPage()
     jqueryMobilePage.pageId = "pageId"
     jqueryMobilePage.footer = "footer_text"
     jqueryMobilePage.header = "header"
@@ -43,14 +43,14 @@ $(document).ready ->
     equals jqueryMobilePage.render(), expected_result
     equals jqueryMobilePage.toJSON(),
       pageId: "pageId"
-      pageType: "JQueryMobilePage"
+      pageType: "SubtestPage"
       urlPath: undefined
       urlScheme: undefined
 
-    anotherJqueryMobilePage = JQueryMobilePage.deserialize(jqueryMobilePage.toJSON())
+    anotherJqueryMobilePage = SubtestPage.deserialize(jqueryMobilePage.toJSON())
     equals anotherJqueryMobilePage.toJSON(),
       pageId: "pageId"
-      pageType: "JQueryMobilePage"
+      pageType: "SubtestPage"
       urlPath: undefined
       urlScheme: undefined
 
@@ -90,7 +90,7 @@ $(document).ready ->
       urlPath: undefined
       urlScheme: undefined
 
-    anotherDateTimePage = JQueryMobilePage.deserialize(dateTimePage.toJSON())
+    anotherDateTimePage = SubtestPage.deserialize(dateTimePage.toJSON())
     equals anotherDateTimePage.toJSON(),
       pageId: "pageId"
       pageType: "DateTimePage"
@@ -162,7 +162,7 @@ $(document).ready ->
   test "Load from http", ->
     expect(3)
     stop()
-    JQueryMobilePage.loadFromHTTP {url: "testData/Assessment.TEST EGRA Prototype.Login"}, (result) ->
+    SubtestPage.loadFromHTTP {url: "testData/Assessment.TEST EGRA Prototype.Login"}, (result) ->
       equal(result.pageType,"JQueryLogin")
       Assessment.loadFromHTTP "testData/Assessment.TEST EGRA Prototype", (result) ->
         equal(result.pages.length,3)
@@ -176,7 +176,7 @@ $(document).ready ->
     Assessment.loadFromHTTP "testData/Assessment.TEST EGRA Prototype", (assessment) ->
       letters = assessment.pages[2]
       letters.saveToLocalStorage()
-      result = JQueryMobilePage.loadFromLocalStorage(letters.urlPath)
+      result = SubtestPage.loadFromLocalStorage(letters.urlPath)
       equals(result.render(), letters.render())
       equals(result.content, letters.content)
       assessment.saveToLocalStorage()
@@ -189,7 +189,7 @@ $(document).ready ->
   test "CouchDB Create/Delete", ->
     expect(4)
     assessment = new Assessment("Test EGRA Prototype")
-    login = new JQueryMobilePage()
+    login = new SubtestPage()
     login.pageId = "Login"
     assessment.setPages([login])
 
@@ -227,7 +227,7 @@ $(document).ready ->
 
       letters = assessment.pages[2]
       letters.saveToCouchDB ->
-        JQueryMobilePage.loadFromCouchDB letters.urlPath, (result) ->
+        SubtestPage.loadFromCouchDB letters.urlPath, (result) ->
           equals(result.render(), letters.render())
           equals(result.content, letters.content)
           result.deleteFromCouchDB()

@@ -42,16 +42,16 @@ $("head").append "
     #content{
       padding: 5px;
     }
-    #assessments td{
-      list-style: none;
-      text-decoration:none;
+    .assessment-name {
       font-family:Arial, sans-serif;
       font-weight:bold;
-      font-size: 200%;
-      padding:3px 5px;
-      border:1px solid #aaa;
-      border-radius:3px;
-      cursor:pointer;
+      font-size: 24px;
+    }
+    
+    #assessments tr
+    {
+      border-bottom: 1px solid black;
+      
     }
 
     legend{
@@ -208,7 +208,11 @@ $("head").append "
       background: url(images/spindown-open.gif) no-repeat left;
     }
 
-    a{
+    a {
+      text-decoration: none;
+    }
+
+    aaa{
       -webkit-appearance: button;
       -webkit-box-align: center;
       background-color: #DDD;

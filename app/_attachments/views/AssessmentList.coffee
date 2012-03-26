@@ -1,32 +1,35 @@
 class AssessmentListView extends Backbone.View
   initialize: ->
 
-  el: $('#content')
+  el: '#content'
 
   templateTableRow: Handlebars.compile "
     <tr>
-      <td class='assessment-name'>
-        <button class='assessment-name' data-target='{{id}}'>{{name}}</button>
+      <td>
+        <div class='assessment-name'>{{name}}</div>
+        <a href='#assessment/{{id}}'>Perform Assessment</a><br>
+        <a href='#results/{{database_name}}'>Results</a>
       </td>
       <td class='number-completed-by-current-enumerator'>
-        <button class='number-completed' data-database-name='{{database_name}}'>{{number_completed}}</button>
+        {{number_completed}}
       </td>
     </tr>
   "
 
   render: =>
-    @el.html "
+    @$el.html "
       <h1>Collect</h1>
       <div id='message'></div>
       <table id='assessments' class='tablesorter'>
         <thead>
           <tr>
-            <th>Assessment Name</th><th>Number Collected</th>
+            <th>Assessment Name</th><th>Total Collected</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     "
+
     $("#assessments").tablesorter()
 
     assessmentCollection = new AssessmentCollection()
@@ -37,11 +40,11 @@ class AssessmentListView extends Backbone.View
           if assessment.get("archived") is true
             itemsToProcess--
             return
-          $.couch.db(assessment.targetDatabase()).view "results/byEnumerator",
+          $.couch.db( assessment.targetDatabase() ).view "results/byEnumerator",
             group: true
             key: $.enumerator
             success: (result) =>
-              @el.find("#assessments tbody").append @templateTableRow
+              @$el.find("#assessments tbody").append @templateTableRow
                 name: assessment.get("name")
                 number_completed: result.rows[0]?.value || "0"
                 id: assessment.get("_id")
@@ -51,12 +54,13 @@ class AssessmentListView extends Backbone.View
               if --itemsToProcess is 0
                 $('table').tablesorter()
 
-  events:
-    "click button.assessment-name": "loadAssessment"
-    "click button.number-completed": "loadResults"
+  #events:
+  #  "click button.assessment-name": "loadAssessment"
+  #  "click button.number-completed": "loadResults"
 
-  loadAssessment: (event) ->
-    Tangerine.router.navigate("assessment/#{$(event.target).attr("data-target")}", true)
-
-  loadResults: (event) ->
-    Tangerine.router.navigate("results/#{$(event.target).attr("data-database-name")}", true)
+  #loadAssessment: (event) ->
+  #  Tangerine.router.navigate("assessment/#{$(event.target).attr("data-target")}", true)
+  #
+  #loadResults: (event) ->
+  #  Tangerine.router.navigate("results/#{$(event.target).attr("data-database-name")}", true)
+  #

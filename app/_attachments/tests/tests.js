@@ -42,10 +42,10 @@ $(document).ready(function() {
     console.log("**" + name + "**");
     return localStorage.clear();
   };
-  test("JQueryMobilePage", function() {
+  test("SubtestPage", function() {
     var anotherJqueryMobilePage, expected_result, jqueryMobilePage;
     expect(3);
-    jqueryMobilePage = new JQueryMobilePage();
+    jqueryMobilePage = new SubtestPage();
     jqueryMobilePage.pageId = "pageId";
     jqueryMobilePage.footer = "footer_text";
     jqueryMobilePage.header = "header";
@@ -54,14 +54,14 @@ $(document).ready(function() {
     equals(jqueryMobilePage.render(), expected_result);
     equals(jqueryMobilePage.toJSON(), {
       pageId: "pageId",
-      pageType: "JQueryMobilePage",
+      pageType: "SubtestPage",
       urlPath: void 0,
       urlScheme: void 0
     });
-    anotherJqueryMobilePage = JQueryMobilePage.deserialize(jqueryMobilePage.toJSON());
+    anotherJqueryMobilePage = SubtestPage.deserialize(jqueryMobilePage.toJSON());
     return equals(anotherJqueryMobilePage.toJSON(), {
       pageId: "pageId",
-      pageType: "JQueryMobilePage",
+      pageType: "SubtestPage",
       urlPath: void 0,
       urlScheme: void 0
     });
@@ -79,7 +79,7 @@ $(document).ready(function() {
       urlPath: void 0,
       urlScheme: void 0
     });
-    anotherDateTimePage = JQueryMobilePage.deserialize(dateTimePage.toJSON());
+    anotherDateTimePage = SubtestPage.deserialize(dateTimePage.toJSON());
     return equals(anotherDateTimePage.toJSON(), {
       pageId: "pageId",
       pageType: "DateTimePage",
@@ -149,7 +149,7 @@ $(document).ready(function() {
   test("Load from http", function() {
     expect(3);
     stop();
-    return JQueryMobilePage.loadFromHTTP({
+    return SubtestPage.loadFromHTTP({
       url: "testData/Assessment.TEST EGRA Prototype.Login"
     }, function(result) {
       equal(result.pageType, "JQueryLogin");
@@ -168,7 +168,7 @@ $(document).ready(function() {
       var anotherAssessment, letters, result;
       letters = assessment.pages[2];
       letters.saveToLocalStorage();
-      result = JQueryMobilePage.loadFromLocalStorage(letters.urlPath);
+      result = SubtestPage.loadFromLocalStorage(letters.urlPath);
       equals(result.render(), letters.render());
       equals(result.content, letters.content);
       assessment.saveToLocalStorage();
@@ -184,7 +184,7 @@ $(document).ready(function() {
     var assessment, login;
     expect(4);
     assessment = new Assessment("Test EGRA Prototype");
-    login = new JQueryMobilePage();
+    login = new SubtestPage();
     login.pageId = "Login";
     assessment.setPages([login]);
     CouchDB["delete"]([assessment, login]);
@@ -222,7 +222,7 @@ $(document).ready(function() {
       CouchDB["delete"]([assessment]);
       letters = assessment.pages[2];
       return letters.saveToCouchDB(function() {
-        return JQueryMobilePage.loadFromCouchDB(letters.urlPath, function(result) {
+        return SubtestPage.loadFromCouchDB(letters.urlPath, function(result) {
           equals(result.render(), letters.render());
           equals(result.content, letters.content);
           result.deleteFromCouchDB();

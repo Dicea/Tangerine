@@ -38,12 +38,11 @@ Checkdigit.allowedChars = "ABCEFGHKMNPQRSTUVWXYZ"
 # TODO automatically calculate coprimes
 Checkdigit.weightings = [1,2,5,11,13]
 
-Checkdigit.toBase10 = (string) ->
-  _.map string.split(""), (character) ->
-    for allowedChar, index in Checkdigit.allowedChars
-      return index if character == allowedChar
-    throw "#{character} is not valid, must be part of #{Checkdigit.allowedChars}"
-
+Checkdigit.toBase10 = (identifier) ->
+  for char in identifier
+    _.indexOf Checkdigit.allowedChars, char
+    
+    
 Checkdigit.generate = (identifier) ->
   checkdigit = ""
   identifierInBase10 = Checkdigit.toBase10(identifier)
@@ -54,14 +53,9 @@ Checkdigit.generate = (identifier) ->
   return Checkdigit.allowedChars[checkdigitBase10]
 
 Checkdigit.isValidIdentifier = (identifier) ->
-  try
-    if identifier.slice(-1) == Checkdigit.generate(identifier.slice(0,-1))
-      return true
-    else
-      return "Invalid student identifier"
-  catch error
-    console.log "ERROR!"
-    return error
+  if identifier.slice( -1 ) == Checkdigit.generate(identifier.slice (0, -1) )
+    return true
+  return false
 
 Checkdigit.randomIdentifier = ->
   returnValue = ""

@@ -1,9 +1,9 @@
 class ResultsView extends Backbone.View
-  el: $('#content')
+  el: '#content'
 
   render: =>
 
-    @el.html "
+    @$el.html "
       <div id='message'></div>
       <h2>#{@databaseName}</h2>
       <div>Last save to cloud: <span id='lastCloudReplicationTime'></span></div>
@@ -13,7 +13,7 @@ class ResultsView extends Backbone.View
       <button>CSV/Excel</button>
       <hr/>
       Results saved by #{$.enumerator}:
-      <div id='results'></div>
+      <div id='results'>No results saved yet.</div>
     "
 
     @detectCloud()
@@ -34,7 +34,7 @@ class ResultsView extends Backbone.View
               Tangerine.resultView ?= new ResultView()
               Tangerine.resultView.model = result
               finishTime = new moment(result.get("timestamp"))
-              $("#results").append "
+              $("#results").html "
                 <div><button>#{finishTime.format("D-MMM-YY")} (#{finishTime.fromNow()})</button></div>
                 <div class='result'>#{Tangerine.resultView.render()}</div>
               "
