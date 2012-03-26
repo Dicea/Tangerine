@@ -200,7 +200,11 @@ Router = (function(_super) {
         Tangerine.assessment = new Assessment({
           _id: id
         });
-        return Tangerine.assessment.doAssessment();
+        return Tangerine.assessment.loadSubtests({
+          success: function() {
+            return Tangerine.assessment.render();
+          }
+        });
       }
     });
   };
@@ -281,22 +285,7 @@ Router = (function(_super) {
 })(Backbone.Router);
 
 $(function() {
-<<<<<<< HEAD
-  var config,
-    _this = this;
-  config = new Backbone.Model({
-    _id: "Config"
-  });
-  config.fetch({
-    success: function() {
-      return Tangerine.config = config.toJSON();
-    }
-  });
   Tangerine.router = new Router();
-  Backbone.history.start();
-=======
->>>>>>> feature/JQueryMobilePageRefactor
   $("#version").load('version');
-  Tangerine.router = new Router();
   return Backbone.history.start();
 });

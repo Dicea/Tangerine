@@ -1,15 +1,18 @@
-var ConsentPageView,
-  __hasProp = Object.prototype.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+(function() {
+  var ConsentPageView,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-ConsentPageView = (function(_super) {
+  ConsentPageView = (function(_super) {
 
-  __extends(ConsentPageView, _super);
+    __extends(ConsentPageView, _super);
 
-  function ConsentPageView() {
-    ConsentPageView.__super__.constructor.apply(this, arguments);
-  }
+    function ConsentPageView() {
+      ConsentPageView.__super__.constructor.apply(this, arguments);
+    }
 
-  return ConsentPageView;
+    return ConsentPageView;
 
-})(SubtestPageView);
+  })(SubtestPageView);
+
+}).call(this);

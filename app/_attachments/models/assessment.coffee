@@ -39,12 +39,6 @@ class Assessment extends Backbone.Model
         else
           options?.error?()
 
-  fetch: (options) =>
-    # Whenever we fetch data we need to take the result and setup the assessment object before doing the callback
-    # this probably belongs in the constructor/initialization code
-    superOptions = options
-    superOptions = 
-
   initialize: ->
     _.bindAll @, 'fetch', 'addPage', 'render', 'linkPages', 'doAssessment'
     @pages = []
