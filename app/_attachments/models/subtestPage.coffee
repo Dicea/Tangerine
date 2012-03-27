@@ -51,11 +51,7 @@ class SubtestPage extends Backbone.Model
       onStop: options.onStop
 
   # By default we expect all input fields to be filled
-  validate: ->
-    for inputElement in $("div##{@pageId} form input")
-      if $(inputElement).val() == ""
-        return "'#{$("label[for="+inputElement.id+"]").html()}' is empty"
-    return true
+
 
   results: ->
     unless @assessment.currentPage.pageId == @pageId

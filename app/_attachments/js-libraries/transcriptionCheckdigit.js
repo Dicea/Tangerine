@@ -39,10 +39,16 @@ Checkdigit.generate = function(identifier) {
 };
 
 Checkdigit.isValidIdentifier = function(identifier) {
-  if (identifier.slice(-1) === Checkdigit.generate(identifier.slice(0, -1))) {
-    return true;
+  try {
+    if (identifier.slice(-1) === Checkdigit.generate(identifier.slice(0, -1))) {
+      return true;
+    } else {
+      return "Invalid student identifier";
+    }
+  } catch (error) {
+    console.log("ERROR!");
+    return error;
   }
-  return false;
 };
 
 Checkdigit.randomIdentifier = function() {
@@ -53,4 +59,29 @@ Checkdigit.randomIdentifier = function() {
     returnValue += Checkdigit.allowedChars[base21Value];
   }
   return returnValue + Checkdigit.generate(returnValue);
+};
+
+Checkdigit.getErrors = function(identifier) {
+  var errors, unallowed;
+  errors = [];
+  if (identifier.length !== Checkdigit.weightings.length) {
+    errors.push("Identifier should be " + Checkdigit.weightings.length + " characters");
+  }
+  if (identifier.length > Checkdigit.weightings.length) {
+    errors.push("Identifier is too long");
+  }
+  if (Checkdigit.isValidIdentifier(identifier)) {
+    errors.push("Identifier is invalid");
+  }
+  unallowed = _.filter(identifier.split(""), function(char) {
+    if (_.indexOf(Checkdigit.allowedChars.split(""), char) === -1) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  if (unallowed.length !== 0) {
+    errors.push("Character: not allowed " + unallowed.toString());
+  }
+  return errors;
 };

@@ -1,4 +1,5 @@
 class SchoolPage extends SubtestPage
+
   constructor: (options) ->
     super(options)
     @schools = options.schools
@@ -25,12 +26,10 @@ class SchoolPage extends SubtestPage
         <input type='text' name='#{dataAttribute}' id='#{dataAttribute}'></input>
       </div>
       "
-    template = "
-      <div>
-        <h4>
-          {{selectSchoolText}}
-        </h4>
-      </div>
+
+    @schoolTemplate = Handlebars.compile   
+      "
+      <h4>{{selectSchoolText}}</h4>
       <form id='{{pageId}}-form'>
         #{inputElements}
       </form>
@@ -41,8 +40,7 @@ class SchoolPage extends SubtestPage
       </ul>
       <br/>
       <br/>
-    "
-    @schoolTemplate = Handlebars.compile template
+      "
 
     @content = @schoolTemplate(this)
 

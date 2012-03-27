@@ -38,11 +38,12 @@ Checkdigit.allowedChars = "ABCEFGHKMNPQRSTUVWXYZ"
 # TODO automatically calculate coprimes
 Checkdigit.weightings = [1,2,5,11,13]
 
-Checkdigit.toBase10 = (identifier) ->
-  for char in identifier
-    _.indexOf Checkdigit.allowedChars, char
-    
-    
+Checkdigit.toBase10 = (string) ->
+  _.map string.split(""), (character) ->
+    for allowedChar, index in Checkdigit.allowedChars
+      return index if character == allowedChar
+    throw "#{character} is not valid, must be part of #{Checkdigit.allowedChars}"
+
 Checkdigit.generate = (identifier) ->
   checkdigit = ""
   identifierInBase10 = Checkdigit.toBase10(identifier)
@@ -53,16 +54,31 @@ Checkdigit.generate = (identifier) ->
   return Checkdigit.allowedChars[checkdigitBase10]
 
 Checkdigit.isValidIdentifier = (identifier) ->
-  if identifier.slice( -1 ) == Checkdigit.generate(identifier.slice (0, -1) )
-    return true
-  return false
+  try
+    if identifier.slice(-1) == Checkdigit.generate(identifier.slice(0,-1))
+      return true
+    else
+      return "Invalid student identifier"
+  catch error
+    console.log "ERROR!"
+    return error
 
 Checkdigit.randomIdentifier = ->
   returnValue = ""
   #Checkdigit.weightings.length dictates how long the string needed is
   while returnValue.length < Checkdigit.weightings.length
     #Checkdigit.allowedChars.length is the upper limit (exclusive) of the range allowed for our random numbers
-    base21Value = Math.floor(Math.random() * Checkdigit.allowedChars.length)
-    returnValue += Checkdigit.allowedChars[base21Value]
+    base21Value = Math.floor( Math.random() * Checkdigit.allowedChars.length )
+    returnValue += Checkdigit.allowedChars[ base21Value ]
   
-  return returnValue + Checkdigit.generate(returnValue)
+  return returnValue + Checkdigit.generate( returnValue )
+
+Checkdigit.getErrors = ( identifier ) ->
+    errors = []
+    errors.push "Identifier should be " + Checkdigit.weightings.length + " characters" if identifier.length != Checkdigit.weightings.length
+    errors.push "Identifier is too long" if identifier.length > Checkdigit.weightings.length
+
+    errors.push "Identifier is invalid" if Checkdigit.isValidIdentifier( identifier )
+    unallowed = _.filter identifier.split(""), (char) -> if _.indexOf(Checkdigit.allowedChars.split(""), char) == -1 then return true else return false
+    if unallowed.length != 0 then errors.push "Character: not allowed " + unallowed.toString()
+    return errors

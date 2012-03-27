@@ -40,14 +40,16 @@ class Assessment extends Backbone.Model
           options?.error?()
 
   initialize: ->
-    _.bindAll @, 'fetch', 'addPage', 'render', 'linkPages', 'doAssessment'
+    _.bindAll @, 'fetch', 'addPage', 'render', 'linkPages', 'loadSubtests'
     @pages = []
     @fetch
 
+  # @TODO subtest models are all subtests
+  # I don't know what 
   loadSubtests: ( options ) ->
     @fetch
       success: =>
-        @changeName(@get("name"))
+        @changeName @get "name"
         @urlPathsForPages = @get "urlPathsForPages"
         @subtestsToLoad = @urlPathsForPages.length
         for urlPath, index in @urlPathsForPages

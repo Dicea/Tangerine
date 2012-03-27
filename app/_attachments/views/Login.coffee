@@ -1,5 +1,4 @@
 class LoginView extends Backbone.View
-  initialize: ->
 
   el: '#content'
 

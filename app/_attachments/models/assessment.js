@@ -14,7 +14,6 @@ Assessment = (function(_super) {
 
   Assessment.prototype.url = '/assessment';
 
-<<<<<<< HEAD
   Assessment.prototype.replicate = function(target, options) {
     var ajaxOptions, replicationLogEntry, replicationOptions;
     $("#message").html("Syncing to " + target);
@@ -64,22 +63,15 @@ Assessment = (function(_super) {
     });
   };
 
-  Assessment.prototype.fetch = function(options) {
-    var superOptions,
-      _this = this;
-    superOptions = options;
-    superOptions = {
-=======
   Assessment.prototype.initialize = function() {
-    _.bindAll(this, 'fetch', 'addPage', 'render', 'linkPages', 'doAssessment');
+    _.bindAll(this, 'fetch', 'addPage', 'render', 'linkPages', 'loadSubtests');
     this.pages = [];
     return this.fetch;
   };
 
-  Assessment.prototype.doAssessment = function() {
+  Assessment.prototype.loadSubtests = function(options) {
     var _this = this;
     return this.fetch({
->>>>>>> feature/JQueryMobilePageRefactor
       success: function() {
         var index, one_subtest, urlPath, _len, _ref, _results;
         _this.changeName(_this.get("name"));
@@ -99,7 +91,7 @@ Assessment = (function(_super) {
               if (_this.subtestsToLoad === 0) {
                 console.log("done loading");
                 _this.linkPages();
-                return _this.render();
+                return options.success();
               }
             }
           }));

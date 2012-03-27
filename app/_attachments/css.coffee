@@ -290,5 +290,15 @@ $("head").append "
       display:inline;
     }
 
+    /*
+     * DateTimePageView
+     */
+
+    input#student_id
+    {
+      text-transform: uppercase;
+    }
+
+
   </style>
   "

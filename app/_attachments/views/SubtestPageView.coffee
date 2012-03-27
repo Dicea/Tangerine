@@ -25,17 +25,15 @@ class SubtestPageView extends Backbone.View
     "
 
   events: 
-    "click .next_page": "gotoNextPage"
+    "click .next_page": "renderNextPage"
     #"click .skip_subtest": "skipSubtest"
 
   initialize: (options) ->
-    _.bindAll @, 'render', 'getEnumeratorHelp'
+    _.bindAll @, 'render', 'getEnumeratorHelp', 'gotoNextPage'
     @options = options
 
   # collects the little bits of template and renders
   render: ->
-    console.log "Got told to render this:"
-    console.log @
     @renderFodder =
       content:        @content
       controls:       @controls
@@ -64,7 +62,22 @@ class SubtestPageView extends Backbone.View
     else
       ""
 
-  gotoNextPage: ->
-    console.log "event handled"
-    console.log @
+  renderNextPage: ->
+    console.log "trying to render next page"
+
     @model.nextPage.render()
+    
+    validationResult = @validate()
+    unless validationResult is true
+      $("<p>"+validationResult+"</p>").dialog
+        model: true
+      $("##{@pageId} div.validation-message").html("").stop( true, true).show().html(validationResult).fadeOut(5000)
+      return
+    @results() # Saves the current result to @lastResult
+    @model.nextPage.render()
+
+  validate: ->
+    for inputElement in $("div##{@pageId} form input")
+      if $(inputElement).val() == ""
+        return "'#{$("label[for="+inputElement.id+"]").html()}' is empty"
+    return true
